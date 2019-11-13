@@ -1,2 +1,2 @@
 # fsa-food-hygiene-ratings
-GDS Prototype
+GDS Prototype to test ratings API
