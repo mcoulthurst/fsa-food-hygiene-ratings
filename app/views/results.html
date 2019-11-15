@@ -30,7 +30,7 @@
     <div class="govuk-grid-column">
 
       <h1 class="govuk-heading-xl">
-        Food Hygiene Ratings for {{ address | upper}}
+        Food Hygiene Ratings for<br/>{{ address | upper}}
       </h1>
 
 {% if not location.length %}
@@ -45,7 +45,7 @@
     <tr class="govuk-table__row">
       <th class="govuk-table__header" scope="col">Name</th>
       <th class="govuk-table__header" scope="col">Address</th>
-      <th class="govuk-table__header" scope="col">Rating</th>
+      <th class="govuk-table__header" scope="col">Rating<br/>(click for data)</th>
       <th class="govuk-table__header" scope="col">Date</th>
     </tr>
   </thead>
@@ -55,10 +55,10 @@
     {% for item in location %}
         <tr class="govuk-table__row">
           <th class="govuk-table__header" scope="row">
-          <a href="https://ratings.food.gov.uk/business/{{item.FHRSID}}/json">{{item.BusinessName}}</a>
+          <a href="https://ratings.food.gov.uk/business/{{item.FHRSID}}">{{item.BusinessName}}</a>
         </th>
           <td class="govuk-table__cell">{{item.AddressLine1+",  "+item.AddressLine2+", "+item.PostCode}}</td>
-          <td class="govuk-table__cell">{{item.RatingValue}}</td>
+          <td class="govuk-table__cell"><a href="business/{{item.FHRSID}}">{{item.RatingValue}}</a></td>
           <td class="govuk-table__cell">{{item.RatingDate}}</td>
         </tr>
     {% endfor %}

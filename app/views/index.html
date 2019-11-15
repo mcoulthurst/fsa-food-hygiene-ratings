@@ -14,13 +14,18 @@
         <span class="govuk-caption-xl">{{releaseVersion}}</span>
       </h1>{{releaseVersion | log }}
       <p>
-        This kit lets you rapidly create HTML prototypes of GOV.UK services.
+        This kit has been used to test the FSA API.
       </p>
 
       <p>
-        It contains all you need to prototype anything from simple static pages to complex, data-driven transactions.
+        It calls the API for a specific address and presents a list of 90 results. The API request details are hard-coded in '/app/routes.js'. Each result links to the page for that property.
+      </p>
+      <p>
+        <a href="/results">FHR API test</a>
       </p>
 
+      <hr class="govuk-section-break govuk-section-break--visible">
+      <p></p>
       <h2 class="govuk-heading-m">About this page</h2>
 
       <p>We recommend you add links to your prototype to this page, rather than delete it.
@@ -34,7 +39,6 @@
       <h2 class="govuk-heading-m">Examples and documentation</h2>
 
       <ul class="govuk-list govuk-list--bullet">
-        <li><a href="/results">FHR API test</a></li>
 
         <li><a href="/docs/tutorials-and-examples">Example pages and documentation</a></li>
         <li>

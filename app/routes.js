@@ -6,17 +6,33 @@ const _ = require('underscore');
 
 const API_URI = 'https://ratings.food.gov.uk/';
 
-
-var searchType = 'enhanced-search'; // search, search-address, enhanced-search
-var nameStr = 'cafe';
-var addressStr = 'strutton ground';
-var addressStr = 'wilton road, london, sw1v';
-var postcode = 'SW1H';
 var format = 'json';
 var sortOrder = 'Alpha';
+
+/*
+// general search
+var searchType = 'search';
+var nameStr = 'cafe';
+var addressStr = 'strutton ground';
+var uri = API_URI+nameStr+'/'+addressStr+'/'+format+'/';
+*/
+
+// search address
+var searchType = 'search-address';
+var addressStr = 'wilton road, london, sw1v';
+var postcode = 'SW1H';
+var uri = API_URI+searchType+'/'+addressStr+'/1/50/'+format+'/';
+
+/*
+// search by coords
+var searchType = 'enhanced-search';
+var addressStr = 'petty france using co-ordinates';
 var lat = -0.135; // 3dp = aprox 350 ft
 var long = 51.499;
+var uri = API_URI+searchType+'/en-GB/^/^/DISTANCE/0/^/'+lat+'/'+long+'/1/90/'+format+'/';
+*/
 
+var locations = [];
 
 
 router.get('/', function(req, res, next) {
@@ -31,15 +47,8 @@ router.get('/error', function(req, res, next) {
 
 
 router.get('/results', function(req, res, next) {
-  //var uri = API_URI+'/'+nameStr+'/'+addressStr+'/'+format+'/';
 
-  //https://ratings.food.gov.uk/enhanced-search/en-GB/^/^/DISTANCE/0/^/-4.73561176951173/55.9421692082746/1/30/xml
-  //https://ratings.food.gov.uk/enhanced-search/en-GB/^/^/DISTANCE/0/^-4.735/55.942/1/50/json/
-
-  //var uri = API_URI+'/'+searchType+'/'+addressStr+'/1/50/'+format+'/';
-	var uri = API_URI+searchType+'/en-GB/^/^/DISTANCE/0/^/'+lat+'/'+long+'/1/90/'+format+'/';
-
-	console.log(uri);
+  console.log(uri);
     request(uri, {
       method: "GET",
       headers: {
@@ -51,18 +60,17 @@ router.get('/results', function(req, res, next) {
           if (!error && response.statusCode == 200) {
             if(body) {
               dataset = JSON.parse(body);
-              var locations = dataset.FHRSEstablishment.EstablishmentCollection.EstablishmentDetail;
-              console.log(locations[0]);
+              console.log(dataset);
+              locations = dataset.FHRSEstablishment.EstablishmentCollection.EstablishmentDetail;
+              //console.log(locations[0]);
 
               res.render('results', {
-                name: nameStr,
                 address: addressStr,
                 location: locations
               });
 
             } else {
               res.render('results', {
-                name: nameStr,
                 address: addressStr,
                 location: []
               });
@@ -72,8 +80,52 @@ router.get('/results', function(req, res, next) {
           }
       });
 
-
 });
+
+/*
+
+{ FHRSID: '428179',
+  LocalAuthorityBusinessID: '01888/0016/0/000',
+  BusinessName: 'Starbucks Coffee Company',
+  BusinessType: 'Restaurant/Cafe/Canteen',
+  BusinessTypeID: '1',
+  AddressLine1: '16-18 Palmer Street',
+  AddressLine2: 'London',
+  AddressLine3: null,
+  AddressLine4: null,
+  PostCode: 'SW1H 0AD',
+  RatingValue: '5',
+  RatingKey: 'fhrs_5_en-gb',
+  RightToReply: null,
+  RatingDate: '17 September 2019',
+  LocalAuthorityCode: '533',
+  LocalAuthorityName: 'Westminster',
+  LocalAuthorityWebSite: 'http://www.westminster.gov.uk/',
+  LocalAuthorityEmailAddress: 'foodsafety@westminster.gov.uk',
+  Scores:
+   { Hygiene: '5', Structural: '5', ConfidenceInManagement: '5' },
+  SchemeType: 'FHRS',
+  NewRatingPending: 'false',
+  Geocode: { Longitude: '-0.135026', Latitude: '51.49898' },
+  Distance: '0.00175345677' }
+
+
+*/
+router.get('/business/:reference', function(req, res) {
+  var refID  = req.params.reference;
+  var target = {};
+  //loop through locations data
+  _.each(locations, function(element, index, list){
+    //console.log(element.FHRSID);
+
+    if(refID===element.FHRSID){
+      target = element;
+    }
+
+  })
+  res.send({target});
+});
+
 
 
 module.exports = router
